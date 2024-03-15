@@ -1,11 +1,12 @@
+require("dotenv").config();
 const { Client, IntentsBitField } = require("discord.js");
 const sqlite3 = require("sqlite3").verbose();
 
-const token = process.env.DISCORD_TOKEN
+const token = process.env.DISCORD_TOKEN;
 
-if(!token) {
-  console.error("Please provide a valid token")
-  process.exit(1)
+if (!token) {
+  console.error("Please provide a valid token");
+  process.exit(1);
 }
 
 const client = new Client({
@@ -36,12 +37,10 @@ client.on("ready", () => {
 });
 
 client.on("messageCreate", (message) => {
-  if (message.author.bot) return; // Ignore messages from other bots
+  if (message.author.bot) return;
 
   if (message.content.startsWith(prefix)) {
     const commandName = message.content.split(" ")[0].replace(prefix, "");
-
-    // message.content will look like "!addtodo need to drink water"
 
     if (commandName === "todo-add") {
       const todoTitle = message.content.replace(`!${commandName} `, "");
@@ -70,7 +69,9 @@ client.on("messageCreate", (message) => {
         }
         const todosList = rows.map(
           (todo) =>
-            `${todo.id}. ${todo.title} - ${todo.state ? "completed" : "incomplete"} by ${todo.creator}`
+            `${todo.id}. ${todo.title} - ${
+              todo.state ? "completed" : "incomplete"
+            } by ${todo.creator}`
         );
         message.reply(todosList.join("\n") || "No todos found");
       });
@@ -84,54 +85,56 @@ client.on("messageCreate", (message) => {
         if (err) {
           return console.error(err.message);
         }
-    
+
         if (this.changes > 0) {
           message.reply(`Deleted todo with ID ${id}`);
         } else {
           message.reply("Todo not found");
         }
       });
-      
     }
 
-    // update a todo state "!todo-toggle 1" this should toggle the state of todo whos id === 1
     if (commandName === "todo-toggle") {
       const id = message.content.replace(`!${commandName} `, "");
 
-      db.run("UPDATE todos SET state = 1 - state WHERE id = ?", [id], function (err) {
-        if (err) {
-          return console.error(err.message);
+      db.run(
+        "UPDATE todos SET state = 1 - state WHERE id = ?",
+        [id],
+        function (err) {
+          if (err) {
+            return console.error(err.message);
+          }
+
+          if (this.changes > 0) {
+            message.reply(`Toggled todo state with ID ${id}`);
+          } else {
+            message.reply("Todo not found");
+          }
         }
-    
-        if (this.changes > 0) {
-          message.reply(`Toggled todo state with ID ${id}`);
-        } else {
-          message.reply("Todo not found");
-        }
-      });
+      );
     }
-    // if any command is given as todo-update 1 < new title > then it should update
     if (commandName === "todo-update") {
       const parts = message.content.replace(`!${commandName} `, "").split(" ");
       const id = parts[0];
       const newTitle = parts.slice(1).join(" ");
-    
-      // Update the todo's title in the database
-      db.run("UPDATE todos SET title = ? WHERE id = ?", [newTitle, id], function (err) {
-        if (err) {
-          return console.error(err.message);
+
+      db.run(
+        "UPDATE todos SET title = ? WHERE id = ?",
+        [newTitle, id],
+        function (err) {
+          if (err) {
+            return console.error(err.message);
+          }
+
+          if (this.changes > 0) {
+            message.reply(`Updated title of todo with ID ${id}`);
+          } else {
+            message.reply("Todo not found");
+          }
         }
-    
-        if (this.changes > 0) {
-          message.reply(`Updated title of todo with ID ${id}`);
-        } else {
-          message.reply("Todo not found");
-        }
-      });
+      );
     }
   }
 });
 
-client.login(
-
-);
+client.login(token);
