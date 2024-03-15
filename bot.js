@@ -1,6 +1,13 @@
 const { Client, IntentsBitField } = require("discord.js");
 const sqlite3 = require("sqlite3").verbose();
 
+const token = process.env.DISCORD_TOKEN
+
+if(!token) {
+  console.error("Please provide a valid token")
+  process.exit(1)
+}
+
 const client = new Client({
   intents: [
     IntentsBitField.Flags.Guilds,
@@ -126,5 +133,5 @@ client.on("messageCreate", (message) => {
 });
 
 client.login(
-  "MTE1OTc2OTc1MzMyNjQ2OTE2MA.GJj0ma.zNw93fdj4KUfZQTBnoiVvR3QnuFmmTdipf0xgE"
+
 );

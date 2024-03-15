@@ -4,6 +4,7 @@
   "description": "",
   "main": "bot.js",
   "scripts": {
+    "start": "node bot",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -11,5 +12,8 @@
   "dependencies": {
     "discord.js": "^14.13.0",
     "sqlite3": "^5.1.6"
+  },
+  "volta": {
+    "node": "18.19.1"
   }
 }
